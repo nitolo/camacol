@@ -79,16 +79,24 @@ if not df_filtrado.empty:
         df_filtrado,
         x="area_m2",
         y="precio",
-        hover_data=['descripcion', 'estrato', 'alcobas', 'banos', 'precio'],
+        hover_data=['estrato', 'alcobas', 'banos', 'precio'],
         title="Precio vs. Área"
     )
     st.plotly_chart(fig_scatter, use_container_width=True)
 
     # Vista tabular de los datos filtrados
     st.subheader("Datos Filtrados")
-    st.dataframe(df_filtrado[['precio', 'area_m2', 'estrato', 'alcobas', 'banos', 'descripcion']])
+    st.dataframe(df_filtrado[['precio', 'area_m2', 'estrato', 'alcobas', 'banos', 'proyecto']])
 
 else:
     st.warning("No se encontraron datos que coincidan con los filtros seleccionados. Por favor, ajusta los criterios.")
 
+
+st.subheader("Distribución de Precios")
+fig_hist_precio = px.histogram(df_filtrado, x="precio", nbins=50, title="Distribución de Precios")
+st.plotly_chart(fig_hist_precio, use_container_width=True)
+
+st.subheader("Distribución de Área (m²)")
+fig_hist_area = px.histogram(df_filtrado, x="area_m2", nbins=50, title="Distribución de Área (m²)")
+st.plotly_chart(fig_hist_area, use_container_width=True)
 
