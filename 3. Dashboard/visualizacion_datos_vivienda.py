@@ -100,3 +100,32 @@ st.subheader("Distribución de Área (m²)")
 fig_hist_area = px.histogram(df_filtrado, x="area_m2", nbins=50, title="Distribución de Área (m²)")
 st.plotly_chart(fig_hist_area, use_container_width=True)
 
+#
+
+if 'destacado' in df_filtrado.columns:
+    st.subheader("Precio Promedio: Destacados vs. No Destacados")
+    
+    # Calcular precio promedio
+    df_destacado = df_filtrado.groupby('destacado')['precio'].mean().reset_index()
+    df_destacado['destacado'] = df_destacado['destacado'].replace({1: 'Destacado', 0: 'No Destacado'})
+    
+    fig_barra_destacado = px.bar(
+        df_destacado, 
+        x='destacado', 
+        y='precio', 
+        title='Precio Promedio de Propiedades',
+        labels={'destacado': 'Tipo de Proyecto', 'precio': 'Precio Promedio'},
+        color='destacado'
+    )
+    st.plotly_chart(fig_barra_destacado, use_container_width=True)
+
+st.subheader("Proyectos con el Valor del m² Más Barato")
+
+# Calcular el precio por m²
+df_filtrado['precio_por_m2'] = df_filtrado['precio'] / df_filtrado['area_m2']
+
+# Obtener los 5 proyectos con el precio por m² más bajo
+proyectos_baratos = df_filtrado.groupby('proyecto')['precio_por_m2'].mean().nsmallest(5).reset_index()
+proyectos_baratos.columns = ['Proyecto', 'Precio Promedio por m²']
+
+st.dataframe(proyectos_baratos)
