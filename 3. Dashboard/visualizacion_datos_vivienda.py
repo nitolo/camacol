@@ -49,20 +49,24 @@ st.header("Filtros de Datos")
 # Lista de opciones para los filtros
 ciudades = sorted(df_base['ciudad'].dropna().unique())
 proyectos = sorted(df_base['proyecto'].dropna().unique())
+estratos = sorted(df_base['estrato'].dropna().unique())
 
 # Crear los selectores para los filtros
-ciudad_seleccionada = st.selectbox("Selecciona una ciudad:", ['Todas'] + ciudades)
-proyecto_seleccionado = st.selectbox("Selecciona un proyecto:", ['Todos'] + proyectos)
+ciudad_seleccionada = st.sidebar.multiselect("Selecciona una ciudad:", ciudades, default = ciudades)
+proyecto_seleccionado = st.sidebar.multiselect("Selecciona un proyecto:", proyectos, default = proyectos)
+estratos_seleccionados = st.sidebar.multiselect("Selecciona uno o más estratos:", estratos, default=estratos)
 
 # Aplicar los filtros
 df_filtrado = df_base.copy()
 
-if ciudad_seleccionada != 'Todas':
-    df_filtrado = df_filtrado[df_filtrado['ciudad'] == ciudad_seleccionada]
+if ciudad_seleccionada:
+    df_filtrado = df_filtrado[df_filtrado['ciudad'].isin(ciudad_seleccionada)]
 
-if proyecto_seleccionado != 'Todos':
-    df_filtrado = df_filtrado[df_filtrado['proyecto'] == proyecto_seleccionado]
+if proyecto_seleccionado:
+    df_filtrado = df_filtrado[df_filtrado['proyecto'].isin(proyecto_seleccionado)]
 
+if estratos_seleccionados:
+    df_filtrado = df_filtrado[df_filtrado['estrato'].isin(estratos_seleccionados)]
 
 # ==============================================================================
 # VISUALIZACIONES
@@ -96,14 +100,14 @@ st.subheader("Distribución de Precios")
 fig_hist_precio = px.histogram(df_filtrado, x="precio", nbins=50, title="Distribución de Precios")
 st.plotly_chart(fig_hist_precio, use_container_width=True)
 
-st.subheader("Distribución de Área (m²)")
+st.subheader("Distribución de Área (m2)")
 fig_hist_area = px.histogram(df_filtrado, x="area_m2", nbins=50, title="Distribución de Área (m²)")
 st.plotly_chart(fig_hist_area, use_container_width=True)
 
 #
 
 if 'destacado' in df_filtrado.columns:
-    st.subheader("Precio Promedio: Destacados vs. No Destacados")
+    st.subheader("Destacados vs. No Destacados")
     
     # Calcular precio promedio
     df_destacado = df_filtrado.groupby('destacado')['precio'].mean().reset_index()
@@ -119,13 +123,15 @@ if 'destacado' in df_filtrado.columns:
     )
     st.plotly_chart(fig_barra_destacado, use_container_width=True)
 
-st.subheader("Proyectos con el Valor del m² Más Barato")
-
+st.subheader("Proyectos con del m2 más barato")
 # Calcular el precio por m²
 df_filtrado['precio_por_m2'] = df_filtrado['precio'] / df_filtrado['area_m2']
 
 # Obtener los 5 proyectos con el precio por m² más bajo
 proyectos_baratos = df_filtrado.groupby('proyecto')['precio_por_m2'].mean().nsmallest(5).reset_index()
 proyectos_baratos.columns = ['Proyecto', 'Precio Promedio por m²']
+
+# Formatear la columna de precios con el símbolo $
+proyectos_baratos['Precio Promedio por m²'] = proyectos_baratos['Precio Promedio por m²'].map('${:,.2f}'.format)
 
 st.dataframe(proyectos_baratos)
