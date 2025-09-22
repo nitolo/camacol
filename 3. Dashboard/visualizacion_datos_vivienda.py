@@ -39,7 +39,7 @@ df_base = load_data()
 # ==============================================================================
 # FILTROS
 # ==============================================================================
-st.header("Filtros de Datos")
+#st.header("Filtros de Datos")
 
 # Lista de opciones para los filtros
 ciudades = sorted(df_base['ciudad'].dropna().unique())
@@ -47,9 +47,9 @@ proyectos = sorted(df_base['proyecto'].dropna().unique())
 estratos = sorted(df_base['estrato'].dropna().unique())
 
 # Crear los selectores para los filtros
-ciudad_seleccionada = st.sidebar.multiselect("Selecciona una ciudad:", ciudades, default = ciudades)
-proyecto_seleccionado = st.sidebar.multiselect("Selecciona un proyecto:", proyectos, default = proyectos)
-estratos_seleccionados = st.sidebar.multiselect("Selecciona uno o más estratos:", estratos, default=estratos)
+ciudad_seleccionada = st.sidebar.multiselect("Seleccione una ciudad:", ciudades, default = ciudades)
+proyecto_seleccionado = st.sidebar.multiselect("Seleccione un proyecto:", proyectos, default = proyectos)
+estratos_seleccionados = st.sidebar.multiselect("Seleccione uno o más estratos:", estratos, default=estratos)
 
 # Aplicar los filtros
 df_filtrado = df_base.copy()
