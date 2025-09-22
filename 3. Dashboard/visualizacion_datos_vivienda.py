@@ -9,16 +9,11 @@
 # LIBRERÍAS
 # ==============================================================================
 
-# Importamos las librerías necesarias
-
 import pandas as pd
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score, mean_squared_error
 import streamlit as st
 import plotly.express as px
 
@@ -74,16 +69,20 @@ if estratos_seleccionados:
 
 st.header("Análisis de Datos")
 
+# ******************************************************************************
+# Relación entre Precio y Área
+# ******************************************************************************
+
 if not df_filtrado.empty:
     st.write(f"Mostrando {len(df_filtrado)} registros.")
     
     # Gráfico de dispersión para ver la relación entre precio y área
-    st.subheader("Relación entre Precio y Área (m²)")
+    st.subheader("Relación entre Precio y Área (m2)")
     fig_scatter = px.scatter(
         df_filtrado,
         x="area_m2",
         y="precio",
-        hover_data=['estrato', 'alcobas', 'banos', 'precio'],
+        hover_data=['estrato', 'alcobas', 'banos', 'precio', 'proyecto'],
         title="Precio vs. Área"
     )
     st.plotly_chart(fig_scatter, use_container_width=True)
@@ -93,18 +92,23 @@ if not df_filtrado.empty:
     st.dataframe(df_filtrado[['precio', 'area_m2', 'estrato', 'alcobas', 'banos', 'proyecto']])
 
 else:
-    st.warning("No se encontraron datos que coincidan con los filtros seleccionados. Por favor, ajusta los criterios.")
+    st.warning("No se encontraron datos. Por favor, ajuste los criterios.")
 
+# ******************************************************************************
+# Histogramas de precio y área
+# ******************************************************************************
 
 st.subheader("Distribución de Precios")
 fig_hist_precio = px.histogram(df_filtrado, x="precio", nbins=50, title="Distribución de Precios")
 st.plotly_chart(fig_hist_precio, use_container_width=True)
 
 st.subheader("Distribución de Área (m2)")
-fig_hist_area = px.histogram(df_filtrado, x="area_m2", nbins=50, title="Distribución de Área (m²)")
+fig_hist_area = px.histogram(df_filtrado, x="area_m2", nbins=50, title="Distribución de Área (m2)")
 st.plotly_chart(fig_hist_area, use_container_width=True)
 
-#
+# ******************************************************************************
+# Proyectos destacados vs no destacados
+# ******************************************************************************
 
 if 'destacado' in df_filtrado.columns:
     st.subheader("Destacados vs. No Destacados")
@@ -123,15 +127,19 @@ if 'destacado' in df_filtrado.columns:
     )
     st.plotly_chart(fig_barra_destacado, use_container_width=True)
 
+# ******************************************************************************
+# Proyectos con el metro cuadrado más barato
+# ******************************************************************************
+
 st.subheader("Proyectos con del m2 más barato")
-# Calcular el precio por m²
+# Calcular el precio por m2
 df_filtrado['precio_por_m2'] = df_filtrado['precio'] / df_filtrado['area_m2']
 
-# Obtener los 5 proyectos con el precio por m² más bajo
+# Obtener los 5 proyectos con el precio por m2 más bajo
 proyectos_baratos = df_filtrado.groupby('proyecto')['precio_por_m2'].mean().nsmallest(5).reset_index()
-proyectos_baratos.columns = ['Proyecto', 'Precio Promedio por m²']
+proyectos_baratos.columns = ['Proyecto', 'Precio Promedio por m2']
 
-# Formatear la columna de precios con el símbolo $
-proyectos_baratos['Precio Promedio por m²'] = proyectos_baratos['Precio Promedio por m²'].map('${:,.2f}'.format)
+# Columna de precios más bonita
+proyectos_baratos['Precio Promedio por m2'] = proyectos_baratos['Precio Promedio por m2'].map('${:,.2f}'.format)
 
 st.dataframe(proyectos_baratos)
