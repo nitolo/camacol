@@ -31,11 +31,12 @@ st.markdown("---")
 # ==============================================================================
 # CARGA DE DATOS
 # ==============================================================================
-ruta_base = "C:/Users/ntorreslo/Downloads/CAMACOL/3. Dashboard/"
+#ruta_base = "C:/Users/ntorreslo/Downloads/CAMACOL/3. Dashboard/"
 
 @st.cache_data
 def load_data():
-    df = pd.read_excel(os.path.join(ruta_base, "ws_fr_vn_ver2_cs_limpia_mineria.xlsx"))
+    #df = pd.read_excel(os.path.join(ruta_base, "ws_fr_vn_ver2_cs_limpia_mineria.xlsx"))
+    df = pd.read_excel("ws_fr_vn_ver2_cs_limpia_mineria.xlsx")
     return df
 
 df_base = load_data()
