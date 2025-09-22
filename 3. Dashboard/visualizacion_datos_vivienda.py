@@ -78,6 +78,8 @@ if not df_filtrado.empty:
     
     # Gráfico de dispersión para ver la relación entre precio y área
     st.subheader("Relación entre Precio y Área (m2)")
+
+    df_filtrado['precio'] = df_filtrado['precio'].map('${:,.2f}'.format)
     fig_scatter = px.scatter(
         df_filtrado,
         x="area_m2",
