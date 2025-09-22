@@ -79,19 +79,19 @@ if not df_filtrado.empty:
     # Gráfico de dispersión para ver la relación entre precio y área
     st.subheader("Relación entre Precio y Área (m2)")
 
-    df_filtrado['precio'] = df_filtrado['precio'].map('${:,.2f}'.format)
+    df_filtrado['precio_formato'] = df_filtrado['precio'].map('${:,.2f}'.format)
     fig_scatter = px.scatter(
         df_filtrado,
         x="area_m2",
-        y="precio",
-        hover_data=['estrato', 'alcobas', 'banos', 'precio', 'proyecto'],
+        y="precio_formato",
+        hover_data=['estrato', 'alcobas', 'banos', 'precio_formato', 'proyecto'],
         title="Precio vs. Área"
     )
     st.plotly_chart(fig_scatter, use_container_width=True)
 
     # Vista tabular de los datos filtrados
     st.subheader("Datos Filtrados")
-    st.dataframe(df_filtrado[['precio', 'area_m2', 'estrato', 'alcobas', 'banos', 'proyecto']])
+    st.dataframe(df_filtrado[['precio_formato', 'area_m2', 'estrato', 'alcobas', 'banos', 'proyecto']])
 
 else:
     st.warning("No se encontraron datos. Por favor, ajuste los criterios.")
